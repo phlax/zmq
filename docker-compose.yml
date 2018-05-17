@@ -1,0 +1,9 @@
+# docker-compose for phlax/zmq
+#
+version: "2.4"
+services:
+
+  zmq:
+    image: phlax/zmq
+    build:
+      context: ./docker
