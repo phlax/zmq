@@ -1,0 +1,34 @@
+# https://travis-ci.org/#!/phlax/zmq
+dist: trusty
+sudo: true
+language: python
+services:
+  - docker
+
+before_install:
+  - "echo '{\"storage-driver\": \"overlay2\"}' | sudo tee /etc/docker/daemon.json"
+  - sudo service docker restart
+
+install:
+  - pip install -U docker-compose
+  - docker-compose build zmq
+
+script:
+
+  # set the environment
+  - echo "COMPOSE_FILE=./example/docker-compose.yml" > ./.env
+
+  - docker-compose up -d zmq-friend-1
+  - docker-compose up -d zmq-friend-2
+
+  - docker-compose logs
+
+  - docker-compose stop
+
+  - docker-compose logs
+
+after_success:
+
+  - docker-compose build zmq
+  - docker login -u phlax -p "$DOCKER_PASSWORD"
+  - docker push phlax/zmq
