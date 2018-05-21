@@ -26,7 +26,9 @@ class Runner(object):
         print("Event loop started.")
         for app, args in self.apps:
             handler = resolve(app)(loop, args[0])
-            print(loop.run_until_complete(handler.handle(*args[1:])))
+            response = loop.run_until_complete(handler.run(*args[1:]))
+            if response is not None:
+                print(response)
         try:
             loop.run_forever()
         finally:
