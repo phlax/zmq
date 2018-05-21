@@ -11,7 +11,11 @@ class Runner(object):
 
     @property
     def apps(self):
-        return [(v.split(' ')[0], v.split(' ')[1:]) for k, v in os.environ.items() if k.startswith('ZMQ_APP')]
+        return [
+            (v.split(' ')[0], v.split(' ')[1:])
+            for k, v
+            in os.environ.items()
+            if k.startswith('ZMQ_APP')]
 
     def run(self):
         loop = asyncio.get_event_loop()
@@ -20,10 +24,9 @@ class Runner(object):
                 getattr(signal, signame),
                 functools.partial(self.stop, loop, signame))
         print("Event loop started.")
-        print("Resolving apps to run...")
         for app, args in self.apps:
-            handler = resolve(app)(loop, *args)
-            loop.run_until_complete(handler.start())
+            handler = resolve(app)(loop, args[0])
+            print(loop.run_until_complete(handler.handle(*args[1:])))
         try:
             loop.run_forever()
         finally:

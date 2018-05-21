@@ -35,8 +35,6 @@ RUN /tmp/build/build.sh
 # App stage
 FROM root
 
-ARG APP_PORT=2323
-
 ENV PYTHONPATH=/app/src \
     APP_SERVER=
 

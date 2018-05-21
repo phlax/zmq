@@ -10,6 +10,7 @@ apt-get install \
    -y \
    -qq \
    --no-install-recommends \
+   git \
    locales \
    python-minimal \
    virtualenv
@@ -25,8 +26,26 @@ useradd \
   $APP_USERNAME
 
 echo "creating app dir: $APP_DIR"
-mkdir -p "$APP_DIR"
+mkdir -p "$APP_DIR/src"
 chown -R $APP_USERNAME:$APP_USERNAME "$APP_DIR"
+
+su - $APP_USERNAME bash -c "\
+   cd $APP_DIR \
+   && virtualenv -p /usr/bin/python3 . \
+   && . bin/activate \
+   && cd src \
+   && git clone https://github.com/phlax/ctrl.core \
+   && git clone https://github.com/phlax/ctrl.config \
+   && git clone https://github.com/phlax/ctrl.command \
+   && git clone https://github.com/phlax/ctrl.zmq \
+   && cd ctrl.core \
+   && pip install -e . \
+   && cd ../ctrl.command \
+   && pip install -e . \
+   && cd ../ctrl.config \
+   && pip install -e . \
+   && cd ../ctrl.zmq \
+   && pip install -e ."
 
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 apt-get clean
