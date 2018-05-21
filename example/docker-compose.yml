@@ -10,18 +10,14 @@ services:
     expose:
     - 2323
     environment:
-    - ZMQ_APP_0=ctrl.socket.server.ZMQSocketServer tcp://*:2323
-    volumes:
-    - ${PWD}/example/src:/app/src
+    - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCServer tcp://*:2323
 
   zmq-friend-2:
     image: phlax/zmq
     networks:
     - zmq
     environment:
-    - ZMQ_APP_0=ctrl.socket.client.ZMQSocketClient tcp://zmq-friend-1:2323
-    volumes:
-    - ${PWD}/example/src:/app/src
+    - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCClient tcp://zmq-friend-1:2323 stop_service foo
 
 networks:
   zmq:
