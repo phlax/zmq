@@ -38,8 +38,8 @@ FROM root
 ENV PYTHONPATH=/app/src \
     APP_SERVER=
 
-COPY ./create /tmp/create
-RUN /tmp/create/create.sh
+COPY ./app /tmp/app
+RUN /tmp/app/create.sh
 
 # the chown flag has to be hardcoded for now
 COPY --chown=zmq:zmq --from=builder "$APP_DIR" "$APP_DIR"
