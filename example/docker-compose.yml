@@ -10,7 +10,7 @@ services:
     expose:
     - 2323
     environment:
-    - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCServer tcp://*:2323
+    - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCServer tcp://0.0.0.0:2323
 
   zmq-friend-2:
     image: phlax/zmq
@@ -21,6 +21,16 @@ services:
     - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCClient tcp://zmq-friend-1:2323 stop_service foo
     volumes:
     - ./controller.conf:/app/controller.conf
+
+  zmq-friend-3:
+    image: phlax/zmq
+    networks:
+    - zmq
+    expose:
+    - 2333
+    environment:
+    # listens for emissions on the 'friend-3' topic
+    - ZMQ_APP_0=ctrl.zmq.pubsub.ZMQSubscriber tcp://0.0.0.0:2333 friend-3
 
 networks:
   zmq:
