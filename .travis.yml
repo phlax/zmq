@@ -21,11 +21,21 @@ script:
   - docker-compose up -d zmq-friend-1
   - docker-compose up -d zmq-friend-2
 
-  - docker-compose logs
+  - docker-compose logs zmq-friend-1
+  - docker-compose logs zmq-friend-2
 
-  - docker-compose stop
+  # run a command in the client
+  - docker-compose -f example/docker-compose.yml exec zmq-friend-2 /app/bin/ctrl zmq rpc tcp://zmq-friend-1:2323 stop_service bar
 
-  - docker-compose logs
+  # run a command with the client
+  - docker-compose stop zmq-friend-2
+  - docker-compose -f example/docker-compose.yml run --rm zmq-friend-2 /app/bin/ctrl zmq rpc tcp://zmq-friend-1:2323 stop_service baz
+
+  - docker-compose logs zmq-friend-2
+
+  # stop the server
+  - docker-compose stop zmq-friend-1
+  - docker-compose logs zmq-friend-1
 
 after_success:
 
