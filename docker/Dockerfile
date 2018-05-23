@@ -27,7 +27,7 @@ RUN /tmp/install/install.sh
 # Build stage
 FROM root as builder
 
-ENV APP_PKG="aiozmq zope.dottedname msgpack"
+ENV APP_PKG="zope.dottedname msgpack"
 
 COPY ./builder /tmp/build
 RUN /tmp/build/build.sh
@@ -44,5 +44,6 @@ RUN /tmp/app/create.sh
 # the chown flag has to be hardcoded for now
 COPY --chown=zmq:zmq --from=builder "$APP_DIR" "$APP_DIR"
 
+VOLUME [ "/app/sockets" ]
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/local/bin/run-zmq"]
