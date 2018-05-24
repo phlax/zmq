@@ -12,10 +12,16 @@ class Runner(object):
     @property
     def apps(self):
         return [
-            (v.split(' ')[0], v.split(' ')[1:])
+            (k[8:], v.split(' ')[0], v.split(' ')[1:])
             for k, v
             in os.environ.items()
             if k.startswith('ZMQ_APP')]
+
+    @property
+    def router(self):
+        if 'ZMQ_ROUTER' in os.environ:
+            router = os.environ['ZMQ_ROUTER'].split(' ')
+            return router[0], router[1:]
 
     def run(self):
         loop = asyncio.get_event_loop()
@@ -24,8 +30,11 @@ class Runner(object):
                 getattr(signal, signame),
                 functools.partial(self.stop, loop, signame))
         print("Event loop started.")
-        for app, args in self.apps:
-            handler = resolve(app)(loop, args[0])
+        if self.router:
+            loop.run_until_complete(
+                resolve(self.router[0])().route(*self.router[1]))
+        for k, app, args in self.apps:
+            handler = resolve(app)(k, args[0], loop=loop)
             response = loop.run_until_complete(handler.run(*args[1:]))
             if response is not None:
                 print(response)
