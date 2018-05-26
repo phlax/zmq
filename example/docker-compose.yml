@@ -17,10 +17,7 @@ services:
     networks:
     - zmq
     environment:
-    - CFG_CTRL=/app/controller.conf
     - ZMQ_APP_0=ctrl.zmq.rpc.ZMQRPCClient tcp://zmq-friend-1:2323 stop_service foo
-    volumes:
-    - ./controller.conf:/app/controller.conf
 
   zmq-friend-3:
     image: phlax/zmq

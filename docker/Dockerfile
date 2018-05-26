@@ -36,7 +36,8 @@ RUN /tmp/build/build.sh
 FROM root
 
 ENV PYTHONPATH=/app/src \
-    APP_SERVER=
+    APP_SERVER= \
+    CTRL_MODULES=ctrl.zmq
 
 COPY ./app /tmp/app
 RUN /tmp/app/create.sh
@@ -44,6 +45,6 @@ RUN /tmp/app/create.sh
 # the chown flag has to be hardcoded for now
 COPY --chown=zmq:zmq --from=builder "$APP_DIR" "$APP_DIR"
 
-VOLUME [ "/app/sockets" ]
+VOLUME ["/app/sockets"]
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/local/bin/run-zmq"]
+CMD ["/app/bin/ctrl", "zmq", "up"]
